@@ -29,7 +29,7 @@ article, aside, details, figcaption, figure,
 html {
 	font-size:18px;
 	  height: 100%;
-	  font-family: 'Space Grotesk', sans-serif;
+		font-family: 'JetBrains Mono', monospace;
 }
 body {
 	  line-height: 1;
