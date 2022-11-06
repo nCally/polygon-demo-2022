@@ -1,8 +1,12 @@
 import { Divider } from 'antd';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import defaultImage from '../defaultone.png';
+// import defaultImage from '../defaultone.png';
+import usdtLogo from '../tether-usdt-logo.png';
+import FundWithBridge from './FundWithBridge';
 import GenerateAddress from './GenerateAddress';
+import SellCryptoWithBridge from './SellCryptoWithBridge';
 
 const Style = styled.div`
 	padding: 20px;
@@ -11,8 +15,8 @@ const Style = styled.div`
 		display: flex;
 
 		& img {
-			width: 18px;
-			height: 18px;
+			width: 20px;
+			height: 20px;
 			margin-right: 7px;
 			border-radius: 50%;
 		}
@@ -32,11 +36,12 @@ const Style = styled.div`
 `;
 
 function AppWallet() {
+	const { data } = useSelector((store) => store.app);
 	return (
 		<Style>
-			<h1>2000</h1>
+			<h1>{data.amountInAppWallet} USDT</h1>
 			<div className="currency">
-				<img src={defaultImage} alt="" />
+				<img src={usdtLogo} alt="" />
 				<p>USDT</p>
 			</div>
 
@@ -44,8 +49,8 @@ function AppWallet() {
 
 			<div className="actions">
 				<GenerateAddress />
-				<p>Fund with XendBridge</p>
-				<p>Convert Fait to USDT</p>
+				<FundWithBridge />
+				<SellCryptoWithBridge />
 			</div>
 		</Style>
 	);

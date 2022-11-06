@@ -84,6 +84,7 @@ export const createContract = async (abi, contractAddress) => {
 	if (!ethersInstance) {
 		throw Error('No web3 provider available.');
 	}
+
 	const { signer, address } = ethersInstance;
 	return {
 		contract: new ethers.Contract(contractAddress, abi, signer),

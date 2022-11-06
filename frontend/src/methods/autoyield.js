@@ -27,3 +27,16 @@ export const withdraw = async (amount) => {
 		console.error(e);
 	}
 };
+
+export const walletBalance = async (address) => {
+	try {
+		const token = await createContract(abi, usdt);
+
+		const d = await token.contract.balanceOf(address);
+		console.log(d);
+		return 0;
+	} catch (e) {
+		console.error(e);
+		return 0;
+	}
+};

@@ -14,7 +14,7 @@ function GenerateAddress() {
 
 	return (
 		<div>
-			<p>Wallet Address</p>
+			<p>Wallet Address from SwitchWallet</p>
 			<br />
 			<p>{profile.length > 0 && profile.address}</p>
 
