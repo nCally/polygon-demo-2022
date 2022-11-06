@@ -8,8 +8,12 @@ const Style = styled.div`
 function AppWallet() {
 	return (
 		<Style>
-			<h1>Wallet</h1>
-			<p>2,000 USDT</p>
+			<h1>2000</h1>
+			<p>USDT</p>
+
+		<p>Generate Wallet Address</p>
+		<p>Fund with XendBridge</p>
+		<p>Convert Fait to USDT</p>
 		</Style>
 	);
 }
