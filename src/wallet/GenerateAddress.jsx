@@ -16,9 +16,8 @@ function GenerateAddress() {
 		<div>
 			<p>Wallet Address from SwitchWallet</p>
 			<br />
-			<p>{profile.length > 0 && profile.address}</p>
-
-			{profile.address.length === 0 && (
+{console.log(profile)}
+			{profile.switchwallet_address == '' && profile.switchwallet_address.length === 0 && (
 				<Button onClick={() => generate()}>Generate Address</Button>
 			)}
 		</div>
