@@ -7,6 +7,7 @@ const usdt = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F';
 
 export const deposit = async (amount) => {
 	try {
+		console.log(amount);
 		const token = await createContract(abi, usdt);
 
 		await token.contract.approve(usdt, amount, { from: token.address });
