@@ -1,38 +1,46 @@
 import axios from 'axios';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-const email = 'sopidib527%40hostovz.com'
-const currency = 4 // USDT
-const network = 3
+const email = 'sopidib527%40hostovz.com';
+const currency = 4; // USDT
+const network = 3;
 
 export const generateSwitchWalletAddress = createAsyncThunk(
 	'app/generateSwitchWalletAddress',
 	async () => {
-		let body ={
-			"clientEmailAddress": email,
-			"currency": currency,
-			"networkChain": network,
-			"publicKey": "NKpmdy9syHz5ZFs61SYWv1xiQbmAxPab6sPzo8hgPtFxjvYkaeeHz3TdPUvnVAkD5CAr2wKfsXmU9nqTpKKBGQXL"
-		  }
-		  console.log(process.env.REACT_APP_SWITCH_WALLET_API_KEY)
-		let config = {
+		const body = {
+			clientEmailAddress: email,
+			currency,
+			networkChain: network,
+			publicKey:
+				'NKpmdy9syHz5ZFs61SYWv1xiQbmAxPab6sPzo8hgPtFxjvYkaeeHz3TdPUvnVAkD5CAr2wKfsXmU9nqTpKKBGQXL',
+		};
+		console.log(process.env.REACT_APP_SWITCH_WALLET_API_KEY);
+		const config = {
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization':  `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`
-			}
-		}
-		let response = await axios.post('https://testnet.switchwallet.io/api/v1/walletAddress/generate',body,config);
-		return response.data.data.address
-
-
+				Authorization: `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`,
+			},
+		};
+		const response = await axios.post(
+			'https://testnet.switchwallet.io/api/v1/walletAddress/generate',
+			body,
+			config
+		);
+		return response.data.data.address;
 	}
 );
 
-export const getAddressBalance = createAsyncThunk('app/getAddressBalance', async () => {
-	const res = await axios.get(`https://testnet.switchwallet.io/api/v1/merchantClientBalance?publicKey=${process.env.REACT_APP_SWITCH_WALLET_PUBLIC_KEY}&merchantClientEmail=${email}`);
-	let balance = res.data.data.filter(p=>p.currency == currency)
-	return balance[0].walletAddress;
-});
+export const getAddressBalance = createAsyncThunk(
+	'app/getAddressBalance',
+	async () => {
+		const res = await axios.get(
+			`https://testnet.switchwallet.io/api/v1/merchantClientBalance?publicKey=${process.env.REACT_APP_SWITCH_WALLET_PUBLIC_KEY}&merchantClientEmail=${email}`
+		);
+		const balance = res.data.data.filter((p) => p.currency === currency);
+		return balance[0].walletAddress;
+	}
+);
 
 export const getInfo = createAsyncThunk('app/getInfo', async () => {
 	const res = await axios.get('/generate');
@@ -64,11 +72,11 @@ const appRx = createSlice({
 		data: {
 			amountInConnectedAddress: 0,
 			amountInAppWallet: 0,
+			amountSaved: 0,
 		},
 	},
 	reducers: {
 		updateConnectedAddressBalance: (store, action) => {
-			
 			const state = store;
 			state.data.amountInConnectedAddress = action.payload;
 			return state;
@@ -78,21 +86,28 @@ const appRx = createSlice({
 			state.data.amountInAppWallet = action.payload;
 			return state;
 		},
-		
+		updateAmountSaved: (store, action) => {
+			const state = store;
+			state.data.amountSaved = action.payload;
+		},
 	},
 	extraReducers: (builder) =>
-		builder.addCase(getInfo.fulfilled, (store, action) => {
-			const state = store;
-			state.profile = action.payload;
-		}).addCase(generateSwitchWalletAddress.fulfilled,(store, action) =>{
-			const state = store;
-			state.profile.switchwallet_address = action.payload;
-		}).addCase(getAddressBalance.fulfilled,(store, action)=>{
-			const state = store;
-			state.data.amountInAppWallet = action.payload;
-		}),
+		builder
+			.addCase(getInfo.fulfilled, (store, action) => {
+				const state = store;
+				state.profile = action.payload;
+			})
+			.addCase(generateSwitchWalletAddress.fulfilled, (store, action) => {
+				const state = store;
+				state.profile.switchwallet_address = action.payload;
+			})
+			.addCase(getAddressBalance.fulfilled, (store, action) => {
+				const state = store;
+				state.data.amountInAppWallet = action.payload;
+			}),
 });
 
-export const { updateConnectedAddressBalance } = appRx.actions;
+export const { updateConnectedAddressBalance, updateAmountSaved } =
+	appRx.actions;
 
 export default appRx.reducer;
