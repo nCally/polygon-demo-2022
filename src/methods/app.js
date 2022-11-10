@@ -21,13 +21,15 @@ export const generateSwitchWalletAddress = createAsyncThunk(
 		let config = {
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization':  `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`
-			}
-		}
-		let response = await axios.post('https://testnet.switchwallet.io/api/v1/walletAddress/generate',body,config);
-		return response.data.data.address
-
-
+				Authorization: `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`,
+			},
+		};
+		const response = await axios.post(
+			'https://testnet.switchwallet.io/api/v1/walletAddress/generate',
+			body,
+			config
+		);
+		return response.data.data.address;
 	}
 );
 
@@ -175,11 +177,11 @@ const appRx = createSlice({
 		data: {
 			amountInConnectedAddress: 0,
 			amountInAppWallet: 0,
+			amountSaved: 0,
 		},
 	},
 	reducers: {
 		updateConnectedAddressBalance: (store, action) => {
-			
 			const state = store;
 			state.data.amountInConnectedAddress = action.payload;
 			return state;
@@ -189,7 +191,10 @@ const appRx = createSlice({
 			state.data.amountInAppWallet = action.payload;
 			return state;
 		},
-		
+		updateAmountSaved: (store, action) => {
+			const state = store;
+			state.data.amountSaved = action.payload;
+		},
 	},
 	extraReducers: (builder) =>
 		builder.addCase(getInfo.fulfilled, (store, action) => {
@@ -207,6 +212,7 @@ const appRx = createSlice({
 		}),
 });
 
-export const { updateConnectedAddressBalance } = appRx.actions;
+export const { updateConnectedAddressBalance, updateAmountSaved } =
+	appRx.actions;
 
 export default appRx.reducer;

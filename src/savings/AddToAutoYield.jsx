@@ -1,21 +1,38 @@
 import React, { useState } from 'react';
 import { Button, Modal, Input } from 'antd';
-import { useSelector } from 'react-redux';
-import { deposit } from '../methods/autoyield';
+import { useDispatch, useSelector } from 'react-redux';
+import { deposit, savingsBalance, walletBalance } from '../methods/autoyield';
+import {
+	updateAmountSaved,
+	updateConnectedAddressBalance,
+} from '../methods/app';
 
 function AddToAutoYield() {
+	const dispatch = useDispatch();
+
 	const [visible, setVisible] = useState(false);
 	const { connectedAddress } = useSelector((store) => store.connection);
 
 	const [state, setState] = useState({
-		amount: 120,
+		amount: 1,
+		loading: false,
 	});
 
-	const submit = () => {
+	const submit = async () => {
 		if (!connectedAddress) {
 			console.log('no address');
 		} else {
-			deposit(state.amount);
+			setState({ ...state, loading: true });
+			const successful = await deposit(state.amount);
+			if (successful) {
+				const savings = savingsBalance(connectedAddress);
+				dispatch(updateAmountSaved(savings));
+
+				const wallet = walletBalance(connectedAddress);
+				dispatch(updateConnectedAddressBalance(wallet));
+			}
+			setState({ ...state, loading: false });
+			setVisible(false);
 		}
 	};
 
@@ -39,7 +56,12 @@ function AddToAutoYield() {
 
 				<br />
 
-				<Button block type="primary" onClick={() => submit()}>
+				<Button
+					loading={state.loading}
+					block
+					type="primary"
+					onClick={() => submit()}
+				>
 					Save
 				</Button>
 			</Modal>
