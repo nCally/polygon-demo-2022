@@ -10,14 +10,14 @@ const BankAccount = "0000187849";
 export const generateSwitchWalletAddress = createAsyncThunk(
   "app/generateSwitchWalletAddress",
   async (email) => {
-    let body = {
+    const body = {
       clientEmailAddress: email,
-      currency: currency,
+      currency,
       networkChain: network,
       publicKey: process.env.REACT_APP_SWITCH_WALLET_PUBLIC_KEY,
     };
     console.log(process.env.REACT_APP_SWITCH_WALLET_API_KEY);
-    let config = {
+    const config = {
       headers: {
         "Content-Type": "application/json",
         Authorization: `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`,
@@ -35,7 +35,7 @@ export const generateSwitchWalletAddress = createAsyncThunk(
 export const getAddressBalance = createAsyncThunk(
   "app/getAddressBalance",
   async () => {
-    let config = {
+    const config = {
       headers: {
         "Content-Type": "application/json",
         Authorization: `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`,
@@ -45,7 +45,7 @@ export const getAddressBalance = createAsyncThunk(
       `https://testnet.switchwallet.io/api/v1/walletBalance/originAccounts?publicKey=${process.env.REACT_APP_SWITCH_WALLET_PUBLIC_KEY}`,
       config
     );
-    let balance = res.data.data.filter((p) => p.key == "USDT");
+    const balance = res.data.data.filter((p) => p.key === "USDT");
     return balance[0].balance;
   }
 );
@@ -53,7 +53,7 @@ export const getAddressBalance = createAsyncThunk(
 export const getOriginAddress = createAsyncThunk(
   "app/getOriginAddress",
   async () => {
-    let config = {
+    const config = {
       headers: {
         "Content-Type": "application/json",
         Authorization: `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`,
@@ -63,7 +63,7 @@ export const getOriginAddress = createAsyncThunk(
       `https://testnet.switchwallet.io/api/OriginAccount`,
       config
     );
-    let account = res.data.data.address;
+    const account = res.data.data.address;
     return account;
   }
 );
@@ -84,14 +84,14 @@ export const buyCryptoApi = createAsyncThunk(
   "app/buyCrypto",
   async (request) => {
     try {
-      let config = {
+      const config = {
         headers: {
           "Content-Type": "application/json",
           secretKey: process.env.REACT_APP_XENDBRIDGE_SECRET_KEY,
         },
       };
       console.log(request, "=========");
-      let body = {
+      const body = {
         emailAddress: request.email,
         phoneNumber: "07064366723",
         userName: "annadoe",
@@ -116,13 +116,13 @@ export const buyCryptoApi = createAsyncThunk(
           },
         },
       };
-      let response = await axios.post(
+      const response = await axios.post(
         "https://canary.xendbridge.com/api/peertopeerorder/buy/initiate",
         body,
         config
       );
       console.log(response);
-      if (response.data.Data.Status == 1) {
+      if (response.data.Data.Status === 1) {
         message.success("Buy order submitted successfully");
       } else {
         message.success(response.data.Data.Message);
@@ -131,21 +131,19 @@ export const buyCryptoApi = createAsyncThunk(
       console.log(e);
       message.success(e.respoonse.data.Data.Message);
     }
-
-    return;
   }
 );
 
 export const sellCryptoApi = createAsyncThunk(
   "app/sellCrypto",
   async (request) => {
-    let config = {
+    const config = {
       headers: {
         "Content-Type": "application/json",
         secretKey: process.env.REACT_APP_XENDBRIDGE_SECRET_KEY,
       },
     };
-    let sellorder = {
+    const sellorder = {
       emailAddress: request.email,
       phoneNumber: "07064366723",
       userName: "annadoe",
@@ -170,13 +168,13 @@ export const sellCryptoApi = createAsyncThunk(
         },
       },
     };
-    let response = await axios.post(
+    const response = await axios.post(
       "https://canary.xendbridge.com/api/peertopeerorder/sell/initiate",
       sellorder,
       config
     );
     console.log(response);
-    if (response.data.Data.Status == 1) {
+    if (response.data.Data.Status === 1) {
       message.success("Buy order submitted successfully");
     } else {
       message.success(response.data.Data.Message);

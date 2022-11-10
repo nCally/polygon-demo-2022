@@ -55,12 +55,12 @@ function AppWallet() {
       </div>
       <p style={{ fontSize: 12 }}>
         origin address:{" "}
-        {profile != undefined ? profile.switchwallet_originaddress : null}
+        {profile !== undefined ? profile.switchwallet_originaddress : null}
       </p>
       <br />
       <p style={{ fontSize: 11 }}>
         generated address:{" "}
-        {profile != undefined ? profile.switchwallet_address : null}
+        {profile !== undefined ? profile.switchwallet_address : null}
       </p>
 
       <Divider />

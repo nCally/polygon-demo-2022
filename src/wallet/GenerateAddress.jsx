@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { generateSwitchWalletAddress } from "../methods/app";
 import { Button, Input, Modal } from "antd";
+import { generateSwitchWalletAddress } from "../methods/app";
 
 function GenerateAddress() {
   const dispatch = useDispatch();
