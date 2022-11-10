@@ -7,7 +7,7 @@ import usdtLogo from '../tether-usdt-logo.png';
 import FundWithBridge from './FundWithBridge';
 import GenerateAddress from './GenerateAddress';
 import SellCryptoWithBridge from './SellCryptoWithBridge';
-import { getAddressBalance } from '../methods/app';
+import { getAddressBalance, getOriginAddress } from '../methods/app';
 
 
 const Style = styled.div`
@@ -41,11 +41,10 @@ function AppWallet() {
 	const { data, profile } = useSelector((store) => store.app);
 	const dispatch = useDispatch();
 	useEffect(() => {
-        if (profile.switchwallet_address != null || profile.switchwallet_address != '' ) {
-			dispatch(getAddressBalance());
-        }
+		dispatch(getAddressBalance());
+		dispatch(getOriginAddress());
         // eslint-disable-next-line
-    }, [profile.switchwallet_address]);
+    }, []);
 	return (
 		<Style>
 			<h1>{data.amountInAppWallet != null? data.amountInAppWallet:0} USDT</h1>
@@ -54,7 +53,10 @@ function AppWallet() {
 				<p>USDT</p>
 
 			</div>
-			<p style={{fontSize:13}}>{profile != undefined ? profile.switchwallet_address: null}</p>
+			<p style={{fontSize:12}}>origin address: {profile != undefined ? profile.switchwallet_originaddress: null}</p>
+			<br />
+			<p style={{fontSize:11}}>generated address: {profile != undefined ? profile.switchwallet_address: null}</p>
+
 
 			
 
