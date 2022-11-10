@@ -1,24 +1,23 @@
 import axios from 'axios';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { toast } from "react-toastify";
-
+import { toast } from 'react-toastify';
 
 // const emaildskj = ' '
-const currency = 4 // USDT
-const network = 3 // polygon
-const BankAccount = '0000187849'
+const currency = 4; // USDT
+const network = 3; // polygon
+const BankAccount = '0000187849';
 
 export const generateSwitchWalletAddress = createAsyncThunk(
 	'app/generateSwitchWalletAddress',
 	async (email) => {
-		let body ={
-			"clientEmailAddress": email,
-			"currency": currency,
-			"networkChain": network,
-			"publicKey": process.env.REACT_APP_SWITCH_WALLET_PUBLIC_KEY
-		  }
-		  console.log(process.env.REACT_APP_SWITCH_WALLET_API_KEY)
-		let config = {
+		const body = {
+			clientEmailAddress: email,
+			currency,
+			networkChain: network,
+			publicKey: process.env.REACT_APP_SWITCH_WALLET_PUBLIC_KEY,
+		};
+		console.log(process.env.REACT_APP_SWITCH_WALLET_API_KEY);
+		const config = {
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`,
@@ -33,30 +32,41 @@ export const generateSwitchWalletAddress = createAsyncThunk(
 	}
 );
 
-export const getAddressBalance = createAsyncThunk('app/getAddressBalance', async () => {
-	let config = {
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization':  `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`
-		}
+export const getAddressBalance = createAsyncThunk(
+	'app/getAddressBalance',
+	async () => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`,
+			},
+		};
+		const res = await axios.get(
+			`https://testnet.switchwallet.io/api/v1/walletBalance/originAccounts?publicKey=${process.env.REACT_APP_SWITCH_WALLET_PUBLIC_KEY}`,
+			config
+		);
+		const balance = res.data.data.filter((p) => p.key === 'USDT');
+		return balance[0].balance;
 	}
-	const res = await axios.get(`https://testnet.switchwallet.io/api/v1/walletBalance/originAccounts?publicKey=${process.env.REACT_APP_SWITCH_WALLET_PUBLIC_KEY}`, config);
-	let balance = res.data.data.filter(p=>p.key == 'USDT')
-	return balance[0].balance;
-});
+);
 
-export const getOriginAddress = createAsyncThunk('app/getOriginAddress', async () => {
-	let config = {
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization':  `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`
-		}
+export const getOriginAddress = createAsyncThunk(
+	'app/getOriginAddress',
+	async () => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `apikey ${process.env.REACT_APP_SWITCH_WALLET_API_KEY}`,
+			},
+		};
+		const res = await axios.get(
+			`https://testnet.switchwallet.io/api/OriginAccount`,
+			config
+		);
+		const account = res.data.data.address;
+		return account;
 	}
-	const res = await axios.get(`https://testnet.switchwallet.io/api/OriginAccount`, config);
-	let account = res.data.data.address
-	return account
-});
-
+);
 
 export const getInfo = createAsyncThunk('app/getInfo', async () => {
 	const res = await axios.get('/generate');
@@ -70,101 +80,107 @@ export const withdrawSwitchwallet = createAsyncThunk(
 	}
 );
 
-export const buyCryptoApi = createAsyncThunk('app/buyCrypto', async ( request) => {
-	try{
-
-	
-	let config = {
-		headers: {
-			'Content-Type': 'application/json',
-			'secretKey':  process.env.REACT_APP_XENDBRIDGE_SECRET_KEY
+export const buyCryptoApi = createAsyncThunk(
+	'app/buyCrypto',
+	async (request) => {
+		try {
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+					secretKey: process.env.REACT_APP_XENDBRIDGE_SECRET_KEY,
+				},
+			};
+			console.log(request, '=========');
+			const body = {
+				emailAddress: request.email,
+				phoneNumber: '07064366723',
+				userName: 'annadoe',
+				payInCurrencyCode: 'NGN',
+				payInCurrencyNetwork: 'LOCAL',
+				receiveInCurrencyCode: 'USDT',
+				receiveInCurrencyNetwork: 'POLYGON',
+				orderAmount: parseFloat(request.amount),
+				consumerDepositMethod: {
+					paymentMethod: 'Bank',
+					paymentData: {
+						accountName: 'Anna doe',
+						accountNumber: BankAccount,
+						bankName: 'Access Bank',
+					},
+				},
+				consumerReceiptMethod: {
+					paymentMethod: 'Crypto',
+					paymentData: {
+						walletAddress: request.walletAddress,
+						network: 'POLYGON',
+					},
+				},
+			};
+			const response = await axios.post(
+				'https://canary.xendbridge.com/api/peertopeerorder/buy/initiate',
+				body,
+				config
+			);
+			console.log(response);
+			if (response.data.Data.Status === 1) {
+				toast.success('Buy order submitted successfully');
+			} else {
+				toast.success(response.data.Data.Message);
+			}
+		} catch (e) {
+			console.log(e);
+			toast.success(e.respoonse.data.Data.Message);
 		}
 	}
-	console.log(request, '=========')
-	let body = {
-		"emailAddress": request.email,
-		"phoneNumber": "07064366723",
-		"userName": "annadoe",
-		"payInCurrencyCode": "NGN",
-		"payInCurrencyNetwork": "LOCAL",
-		"receiveInCurrencyCode": "USDT",
-		"receiveInCurrencyNetwork": "POLYGON",
-		"orderAmount": parseFloat(request.amount),
-		"consumerDepositMethod": {
-		  "paymentMethod": "Bank",
-		  "paymentData": {
-			"accountName": "Anna doe",
-			"accountNumber": BankAccount,
-			"bankName": "Access Bank"
-		  }
-		},
-		"consumerReceiptMethod": {
-		  "paymentMethod": "Crypto",
-		  "paymentData": {
-			"walletAddress": request.walletAddress,
-			"network": "POLYGON"
-		  }
-		}
-	  }
-	  let response = await axios.post('https://canary.xendbridge.com/api/peertopeerorder/buy/initiate', body, config);
-	  console.log(response)
-	  if (response.data.Data.Status == 1){
-		toast.success("Buy order submitted successfully");
+);
 
-	  }else{
-		toast.success(response.data.Data.Message);
-	  }
-	}catch(e){
-		console.log(e)
-		toast.success(e.respoonse.data.Data.Message);
-
-	}
-
-	  return 
-});
-
-export const sellCryptoApi = createAsyncThunk('app/sellCrypto', async (request) => {
-	let config = {
-		headers: {
-			'Content-Type': 'application/json',
-			'secretKey':  process.env.REACT_APP_XENDBRIDGE_SECRET_KEY
+export const sellCryptoApi = createAsyncThunk(
+	'app/sellCrypto',
+	async (request) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+				secretKey: process.env.REACT_APP_XENDBRIDGE_SECRET_KEY,
+			},
+		};
+		const sellorder = {
+			emailAddress: request.email,
+			phoneNumber: '07064366723',
+			userName: 'annadoe',
+			payInCurrencyCode: 'USDT',
+			payInCurrencyNetwork: 'POLYGON',
+			receiveInCurrencyCode: 'NGN',
+			receiveInCurrencyNetwork: 'LOCAL',
+			orderAmount: parseFloat(request.amount),
+			consumerDepositMethod: {
+				paymentMethod: 'Crypto',
+				paymentData: {
+					walletAddress: request.walletAddress,
+					network: 'POLYGON',
+				},
+			},
+			consumerReceiptMethod: {
+				paymentMethod: 'Bank',
+				paymentData: {
+					accountName: 'Anna Doe',
+					accountNumber: BankAccount,
+					bankName: 'Access Bank',
+				},
+			},
+		};
+		const response = await axios.post(
+			'https://canary.xendbridge.com/api/peertopeerorder/sell/initiate',
+			sellorder,
+			config
+		);
+		console.log(response);
+		if (response.data.Data.Status === 1) {
+			toast.success('Buy order submitted successfully');
+		} else {
+			toast.success(response.data.Data.Message);
 		}
 	}
-	let sellorder = {
-		"emailAddress": request.email,
-		"phoneNumber": "07064366723",
-		"userName": "annadoe",
-		"payInCurrencyCode": "USDT",
-		"payInCurrencyNetwork": "POLYGON",
-		"receiveInCurrencyCode": "NGN",
-		"receiveInCurrencyNetwork": "LOCAL",
-		"orderAmount": parseFloat(request.amount),
-		"consumerDepositMethod": {
-		  "paymentMethod": "Crypto",
-		  "paymentData": {
-			"walletAddress": request.walletAddress,
-			"network": "POLYGON"
-		  }
-		},
-		"consumerReceiptMethod": {
-		  "paymentMethod": "Bank",
-		  "paymentData": {
-			"accountName": "Anna Doe",
-			"accountNumber": BankAccount,
-			"bankName": "Access Bank"
-		  }
-		}
-	  }
-	  let response = await axios.post('https://canary.xendbridge.com/api/peertopeerorder/sell/initiate', sellorder, config);
-	  console.log(response)
-	  if (response.data.Data.Status == 1){
-		toast.success("Buy order submitted successfully");
-
-	  }else{
-		toast.success(response.data.Data.Message);
-	  }
-
-});
+);
 
 const appRx = createSlice({
 	name: 'app',
@@ -172,7 +188,7 @@ const appRx = createSlice({
 		profile: {
 			switchwallet_address: '',
 			email: '',
-			switchwallet_originaddress: ''
+			switchwallet_originaddress: '',
 		},
 		data: {
 			amountInConnectedAddress: 0,
@@ -197,19 +213,23 @@ const appRx = createSlice({
 		},
 	},
 	extraReducers: (builder) =>
-		builder.addCase(getInfo.fulfilled, (store, action) => {
-			const state = store;
-			state.profile = action.payload;
-		}).addCase(generateSwitchWalletAddress.fulfilled,(store, action) =>{
-			const state = store;
-			state.profile.switchwallet_address = action.payload;
-		}).addCase(getAddressBalance.fulfilled,(store, action)=>{
-			const state = store;
-			state.data.amountInAppWallet = action.payload;
-		}).addCase(getOriginAddress.fulfilled,(store, action) =>{
-			const state = store;
-			state.profile.switchwallet_originaddress = action.payload
-		}),
+		builder
+			.addCase(getInfo.fulfilled, (store, action) => {
+				const state = store;
+				state.profile = action.payload;
+			})
+			.addCase(generateSwitchWalletAddress.fulfilled, (store, action) => {
+				const state = store;
+				state.profile.switchwallet_address = action.payload;
+			})
+			.addCase(getAddressBalance.fulfilled, (store, action) => {
+				const state = store;
+				state.data.amountInAppWallet = action.payload;
+			})
+			.addCase(getOriginAddress.fulfilled, (store, action) => {
+				const state = store;
+				state.profile.switchwallet_originaddress = action.payload;
+			}),
 });
 
 export const { updateConnectedAddressBalance, updateAmountSaved } =

@@ -20,6 +20,7 @@ function Connection() {
 
 	return (
 		<div>
+			<p>Metamask wallet address</p>
 			<Button type="primary" onClick={() => setOpen(true)}>
 				{connectedAddress}
 			</Button>

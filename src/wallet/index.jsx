@@ -42,7 +42,7 @@ function AppWallet() {
 	useEffect(() => {
 		dispatch(getAddressBalance());
 		dispatch(getOriginAddress());
-        // eslint-disable-next-line
+		// eslint-disable-next-line
     }, []);
 	return (
 		<Style>
@@ -53,12 +53,15 @@ function AppWallet() {
 				<img src={usdtLogo} alt="" />
 				<p>USDT</p>
 			</div>
-			<p style={{fontSize:12}}>origin address: {profile != undefined ? profile.switchwallet_originaddress: null}</p>
+			<p style={{ fontSize: 12 }}>
+				origin address:{' '}
+				{profile !== undefined ? profile.switchwallet_originaddress : null}
+			</p>
 			<br />
-			<p style={{fontSize:11}}>generated address: {profile != undefined ? profile.switchwallet_address: null}</p>
-
-
-			
+			<p style={{ fontSize: 11 }}>
+				generated address:{' '}
+				{profile !== undefined ? profile.switchwallet_address : null}
+			</p>
 
 			<Divider />
 

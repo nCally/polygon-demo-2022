@@ -1,18 +1,15 @@
-import React, {useState} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { generateSwitchWalletAddress } from '../methods/app';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Button, Input, Modal } from 'antd';
-
+import { generateSwitchWalletAddress } from '../methods/app';
 
 function GenerateAddress() {
 	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);
 	const [email, setEmail] = useState('');
 
-	const { profile } = useSelector((store) => store.app);
-
 	const generate = () => {
-		setOpen(false)
+		setOpen(false);
 		dispatch(generateSwitchWalletAddress(email));
 	};
 
@@ -20,7 +17,7 @@ function GenerateAddress() {
 		<div>
 			<p>Wallet Address from SwitchWallet</p>
 			<br />
-				<Button onClick={() =>setOpen(true) }>Generate Address</Button>
+			<Button onClick={() => setOpen(true)}>Generate Address</Button>
 			<Modal
 				footer={null}
 				width={320}
@@ -30,14 +27,14 @@ function GenerateAddress() {
 			>
 				<div>
 					<p>User Email?</p>
-					<Input addonAfter="Email" onChange={(e) => setEmail(e.target.value)}/>
+					<Input
+						addonAfter="Email"
+						onChange={(e) => setEmail(e.target.value)}
+					/>
 				</div>
 				<br />
 
-				
-
 				<br />
-
 
 				<Button block type="primary" onClick={() => generate()}>
 					Submit

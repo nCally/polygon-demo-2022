@@ -11,11 +11,17 @@ function SellCryptoWithBridge() {
 	const dispatch = useDispatch();
 	const { profile } = useSelector((store) => store.app);
 
-	const sellCrypto=() =>{
-		setOpen(false)
-		console.log(profile.switchwallet_originaddress, email ,amount)
-		dispatch(sellCryptoApi({walletAddress:profile.switchwallet_originaddress,email,amount}));
-	}
+	const sellCrypto = () => {
+		setOpen(false);
+		console.log(profile.switchwallet_originaddress, email, amount);
+		dispatch(
+			sellCryptoApi({
+				walletAddress: profile.switchwallet_originaddress,
+				email,
+				amount,
+			})
+		);
+	};
 	return (
 		<>
 			<div>
@@ -33,19 +39,22 @@ function SellCryptoWithBridge() {
 			>
 				<div>
 					<p>How much USDT to sell?</p>
-					<Input addonAfter="USDT"  onChange={(e) => setAmount(e.target.value)}/>
+					<Input
+						addonAfter="USDT"
+						onChange={(e) => setAmount(e.target.value)}
+					/>
 				</div>
 
 				<br />
 
 				<div>
 					<p>Contact Email</p>
-					<Input type="email"  onChange={(e) => setEmail(e.target.value)}/>
+					<Input type="email" onChange={(e) => setEmail(e.target.value)} />
 				</div>
 
 				<br />
 
-				<Button block type="primary" onClick={()=>sellCrypto()}>
+				<Button block type="primary" onClick={() => sellCrypto()}>
 					Submit
 				</Button>
 			</Modal>
